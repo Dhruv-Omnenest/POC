@@ -39,6 +39,46 @@ export const loginUser = async (username: string, password: string) => {
 }
 
 
+export const setLargeCookie = (name: string, value: string, options: any) => {
+    const chunkSize = 3000;
+    const numChunks = Math.ceil(value.length / chunkSize);
+    Cookies.set(`${name}_chunks`, numChunks.toString(), options);
+
+    for (let i = 0; i < numChunks; i++) {
+        Cookies.set(`${name}_${i}`, value.substring(i * chunkSize, (i + 1) * chunkSize), options);
+    }
+};
+
+export const getLargeCookie = (name: string): string | undefined => {
+    const numChunksStr = Cookies.get(`${name}_chunks`);
+    if (!numChunksStr) {
+        return Cookies.get(name); // Fallback for small tokens
+    }
+
+    const numChunks = parseInt(numChunksStr, 10);
+    let value = '';
+
+    for (let i = 0; i < numChunks; i++) {
+        const chunk = Cookies.get(`${name}_${i}`);
+        if (!chunk) return undefined; // Incomplete token
+        value += chunk;
+    }
+    return value;
+};
+
+export const removeLargeCookie = (name: string) => {
+    const numChunksStr = Cookies.get(`${name}_chunks`);
+    Cookies.remove(name); // standard fallback removal
+
+    if (numChunksStr) {
+        const numChunks = parseInt(numChunksStr, 10);
+        Cookies.remove(`${name}_chunks`);
+        for (let i = 0; i < numChunks; i++) {
+            Cookies.remove(`${name}_${i}`);
+        }
+    }
+};
+
 export const validateOtp = async (username: string, otp: number) => {
     try {
         const payload = {
@@ -50,20 +90,28 @@ export const validateOtp = async (username: string, otp: number) => {
             payload
         )
 
-        const token = response.data.jwtTokens.accessToken;
-        Cookies.set('auth_token', token, {
-            expires: 1,
-            secure: true,
-            sameSite: 'strict',
-            path: '/'
-        });
+        // The backend API actually returns `userToken` instead of `accessToken`
+        // We will aggressively search for it to ensure the cookie is set regardless of nesting
+        const jwtObj = response.data?.jwtTokens || response.data?.data?.jwtTokens || response.data;
+        const accessToken = jwtObj?.userToken || jwtObj?.accessToken || response.data?.userToken;
+        const refreshToken = jwtObj?.refreshToken || response.data?.refreshToken;
 
-        Cookies.set('refresh_token', token.refreshToken, {
-            expires: 7,
-            secure: true,
-            sameSite: 'strict',
-            path: '/'
-        })
+        console.log("Extracted Tokens to Set:", { accessToken: !!accessToken, refreshToken: !!refreshToken });
+
+        if (accessToken) {
+            setLargeCookie('auth_token', accessToken, {
+                expires: 1,
+                path: '/'
+            });
+        }
+
+        if (refreshToken) {
+            setLargeCookie('refresh_token', refreshToken, {
+                expires: 7,
+                path: '/'
+            });
+        }
+
         return response.data;
     }
     catch (error: any) {
@@ -75,5 +123,5 @@ export const validateOtp = async (username: string, otp: number) => {
 }
 
 export const getAuthToken = (): string | undefined => {
-    return Cookies.get('auth_token');
+    return getLargeCookie('auth_token');
 };

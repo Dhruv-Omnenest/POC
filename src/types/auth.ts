@@ -1,14 +1,14 @@
 // types/auth.ts
 
-export type Exchange = 
-    | "NSE" | "SLBM" | "NDM" | "NCO" | "CDS" | "NCDEX" 
-    | "MCXSX" | "MCXSXFO" | "MCXSXCM" | "MCX" | "BSEMF" 
+export type Exchange =
+    | "NSE" | "SLBM" | "NDM" | "NCO" | "CDS" | "NCDEX"
+    | "MCXSX" | "MCXSXFO" | "MCXSXCM" | "MCX" | "BSEMF"
     | "BSE" | "BCO" | "BCD" | "BFO" | "NFO";
 
 export type ProductCode = "BO" | "CNC" | "CO" | "MIS" | "MTF" | "NRML";
 
 export interface JwtTokens {
-    accessToken: string;
+    userToken: string;
     refreshToken: string;
 }
 
@@ -39,7 +39,7 @@ export interface UserProfile {
     isPasswordExpired: boolean;
     indexEnabledExchanges: string[] | null;
     kraResponse: KraResponse[];
-    jwtTokens: JwtTokens; 
+    jwtTokens: JwtTokens;
 }
 
 export interface HandshakeResponse {
