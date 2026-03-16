@@ -2,7 +2,7 @@ import { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { apiClient } from "./axios";
 import { getHeaders } from "../utils/requestHeaders";
 import { useAuthStore } from "../store/auth.store";
-import { getAuthToken, setLargeCookie } from "./auth.api";
+import { getAuthToken, setLargeToken } from "./auth.api";
 import { addSubscriber, processQueue } from "../utils/authQueue";
 import Cookies from "js-cookie";
 
@@ -79,15 +79,8 @@ apiClient.interceptors.response.use(
                 const newRefreshToken = response.data?.jwtTokens?.refreshToken || response.data?.refreshToken;
 
                 if (newAccessToken && newRefreshToken) {
-                    setLargeCookie('auth_token', newAccessToken, {
-                        expires: 1,
-                        path: '/'
-                    });
-
-                    setLargeCookie('refresh_token', newRefreshToken, {
-                        expires: 7,
-                        path: '/'
-                    });
+                    setLargeToken('auth_token', newAccessToken);
+                    setLargeToken('refresh_token', newRefreshToken);
 
                     isRefreshing = false;
                     processQueue(null, newAccessToken);

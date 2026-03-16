@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import type { HandshakeResponse, UserProfile } from '../types/auth';
-import { loginUser, preAuthHandShake, validateOtp, removeLargeCookie, getAuthToken } from '../api/auth.api';
+import { loginUser, preAuthHandShake, validateOtp, removeLargeToken, getAuthToken } from '../api/auth.api';
 
 interface AuthState {
     user: Omit<UserProfile, 'jwtTokens'> | null;
@@ -62,8 +62,8 @@ export const useAuthStore = create<AuthState>((set) => ({
         }
     },
     logout: () => {
-        removeLargeCookie('auth_token');
-        removeLargeCookie('refresh_token');
+        removeLargeToken('auth_token');
+        removeLargeToken('refresh_token');
         set({ user: null, isAuthenticated: false, bffPublicKey: null, error: null });
     },
 }));
