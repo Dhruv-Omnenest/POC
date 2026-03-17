@@ -62,6 +62,28 @@ export const validateOtp = async (username: string, otp: number) => {
     }
 }
 
+
+export const forgetUser = async (panNumber: string, emailId: string) => {
+    try {
+        const payload = {
+            panNumber,
+            emailId
+        }
+        const response = await apiClient.post(
+            'v1/api/auth/forgot-user-id',
+            payload
+        )
+        return response.data;
+    }
+    catch (error: any) {
+        if (error.response) {
+            console.error("Forget User Id Failed:", error.response.data);
+        }
+        throw error;
+    }
+}
+
+
 export const getAuthToken = (): string | null => {
     return localStorage.getItem('auth_token');
 };

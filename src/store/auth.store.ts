@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import Cookies from "js-cookie";
 import type { HandshakeResponse, UserProfile } from '../types/auth';
-import { loginUser, preAuthHandShake, validateOtp } from '../api/auth.api';
+import { loginUser, preAuthHandShake, validateOtp,forgetUser, logoutUser } from '../api/auth.api';
 
 interface AuthState {
     user: Omit<UserProfile, 'jwtTokens'> | null;
@@ -13,6 +13,8 @@ interface AuthState {
     executeHandshake: () => Promise<void>;
     executeLogin: (username: string, password: string) => Promise<void>;
     executeOtpValidation: (username: string, otp: number) => Promise<void>;
+    executeForgetUserId: (panNumber:string,emailId:string) => Promise<void>;
+    executeLogout:() => Promise <void>;
     logout: () => void;
 }
 
@@ -70,6 +72,27 @@ export const useAuthStore = create<AuthState>()(
                 Cookies.remove('refresh_token');
                 set({ user: null, isAuthenticated: false, bffPublicKey: null, error: null });
                 localStorage.removeItem('auth-storage');
+            },
+
+              executeForgetUserId: async (panNumber, emailId) => {
+                try {
+                    await forgetUser(panNumber,emailId);
+                    console.log("Forget User Id Success")
+                } catch (err: any) {
+                    set({ error: "Forget User Id Failed", isLoading: false });
+                    throw err;
+                }
+            },
+
+
+              executeLogout: async () => {
+                try {
+                     await logoutUser();
+                    console.log("Logout Success");
+                } catch (err: any) {
+                    set({ error: "Logout failed", isLoading: false });
+                    throw err;
+                }
             },
         }),
         {
