@@ -100,26 +100,26 @@ const AuthPage: React.FC = () => {
           {isLoading ? "Processing..." : (step === 'LOGIN' ? 'Login' : 'Verify & Login')}
         </button>
       </form>
-      <div className='flex justify-between items-center mt-4'>
-        {step !== 'OTP' ? (
-          <div className='flex justify-between items-center mt-4'>
-            <button
-              type='button'
-              onClick={() => executeForgetUserId("AMITH1234A", "amit.gupta@omnenest.com")}
-              className='text-[#0f62fe] text-xs'
-            >
-              Forgot user ID or password?
-            </button>
+     <div className='mt-4'>
+  {step !== 'OTP' && (
+    <div className='flex w-full items-center justify-between'>
+      <button
+        type='button'
+        onClick={() => executeForgetUserId("AMITH1234A", "amit.gupta@omnenest.com")}
+        className='text-[#0f62fe] text-xs hover:underline'
+      >
+        Forgot user ID or password?
+      </button>
 
-            <button
-              type='button'
-              className='text-[#0f62fe] text-xs'
-            >
-              Guest Login
-            </button>
-          </div>
-        ) : null}
-      </div>
+      <button
+        type='button'
+        className='text-[#0f62fe] text-xs hover:underline'
+      >
+        Guest Login
+      </button>
+    </div>
+  )}
+</div>
     </AuthLayout>
   );
 };
