@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import { apiClient } from "./axios"
 export const preAuthHandShake = async () => {
     try {
@@ -50,20 +49,9 @@ export const validateOtp = async (username: string, otp: number) => {
             payload
         )
 
-        const token = response.data.jwtTokens.accessToken;
-        Cookies.set('auth_token', token, {
-            expires: 1,
-            secure: true,
-            sameSite: 'strict',
-            path: '/'
-        });
-
-        Cookies.set('refresh_token', token.refreshToken, {
-            expires: 7,
-            secure: true,
-            sameSite: 'strict',
-            path: '/'
-        })
+        const token = response.data.jwtTokens;
+       localStorage.setItem('auth_token', token.accessToken);
+        localStorage.setItem('refresh_token', token.refreshToken);
         return response.data;
     }
     catch (error: any) {
@@ -74,6 +62,11 @@ export const validateOtp = async (username: string, otp: number) => {
     }
 }
 
-export const getAuthToken = (): string | undefined => {
-    return Cookies.get('auth_token');
+export const getAuthToken = (): string | null => {
+    return localStorage.getItem('auth_token');
+};
+
+export const logoutUser = () => {
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('refresh_token');
 };
