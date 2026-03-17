@@ -4,30 +4,31 @@ export const AuthLayout: React.FC<{ children: React.ReactNode }> = ({ children }
   <div className="flex h-dvh w-full items-center justify-center bg-slate-50 overflow-hidden">
     <div className="flex h-[calc(100dvh-2rem)] w-[calc(100vw-2rem)] max-w-275 overflow-hidden rounded-[22px] bg-white shadow-xl lg:shadow-none">
      <section className="relative hidden w-[47%] overflow-hidden flex-col rounded-[22px] bg-[#0f62fe] text-white lg:flex">
-  {/* Fine Grid with Wider Spread */}
+  {/* The Subtle Dark-White Grid */}
   <div 
-    className="absolute inset-0 opacity-30"
+    className="absolute inset-0"
     style={{
-      // Tiny 12px squares
-      backgroundImage: `linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)`,
-      backgroundSize: '12px 12px', 
+      // Using 0.08 opacity for the lines makes them look "darker" against the blue
+      backgroundImage: `linear-gradient(rgba(255,255,255,0.08) 1.5px, transparent 1.5px), 
+                        linear-gradient(90deg, rgba(255,255,255,0.08) 1.5px, transparent 1.5px)`,
+      backgroundSize: '14px 14px', 
       
-      // "spread" further by increasing the 10% to 30% and 70% to 90%
-      maskImage: 'radial-gradient(circle at center, black 30%, transparent 90%)',
-      WebkitMaskImage: 'radial-gradient(circle at center, black 30%, transparent 90%)'
+      // Wide center-out spread
+      maskImage: 'radial-gradient(circle at center, black 40%, transparent 90%)',
+      WebkitMaskImage: 'radial-gradient(circle at center, black 40%, transparent 90%)'
     }}
   />
 
-  {/* Subtle Glow to make the center grid pop */}
-  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_80%)]" />
+  {/* Your Original Top-Left Glow (Kept for depth) */}
+  <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.15),transparent_40%),linear-gradient(180deg,rgba(0,0,0,0.1)_0%,transparent_100%)]" />
 
   {/* Content Layer */}
   <div className="relative z-10 flex h-full flex-col items-center justify-between px-10 py-12 text-center">
     <div className="pt-12">
-      <h1 className="text-3xl font-medium leading-tight">
+      <h1 className="text-3xl font-medium leading-tight text-white">
         Take Charge <br /> of Your <span className="font-bold">Investments with Us</span>
       </h1>
-      <p className="mt-4 text-sm text-blue-100 opacity-80 italic">"Secure your future with Nest"</p>
+      <p className="mt-4 text-sm text-blue-100 opacity-70 italic">"Secure your future with Nest"</p>
     </div>
 
     <div className="flex flex-1 items-center justify-center">
