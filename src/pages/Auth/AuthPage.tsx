@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,11 +7,12 @@ import { useAuthStore } from '../../store/auth.store';
 import { loginSchema, otpSchema, type LoginFormData, type OtpFormData } from '../../schema/auth.schema';
 import { AuthLayout } from './components/AuthLayout';
 import { InputField } from '../../shared/components/InputField';
+import { OtpInput } from '../../shared/components/OtpInput';
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<'LOGIN' | 'OTP'>('LOGIN');
-  const { executeHandshake, executeLogin, executeOtpValidation,executeForgetUserId, isLoading, error } = useAuthStore();
+  const { executeHandshake, executeLogin, executeOtpValidation, executeForgetUserId, isLoading, error } = useAuthStore();
 
   const loginForm = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
   const otpForm = useForm<OtpFormData>({ resolver: zodResolver(otpSchema) });
@@ -40,7 +41,7 @@ const AuthPage: React.FC = () => {
         </h2>
       </div>
 
-      <form 
+      <form
         onSubmit={step === 'LOGIN' ? loginForm.handleSubmit(onLoginSubmit) : otpForm.handleSubmit(onOtpSubmit)}
         className="space-y-4"
       >
@@ -53,7 +54,7 @@ const AuthPage: React.FC = () => {
               registration={loginForm.register("username")}
               error={loginForm.formState.errors.username?.message}
             />
-            <InputField 
+            <InputField
               label="Password / MPIN"
               type="password"
               placeholder="Enter password / MPIN"
@@ -70,13 +71,17 @@ const AuthPage: React.FC = () => {
                 Sent to {loginForm.getValues("username") || "your account"}
               </p>
             </div>
-            <InputField 
-              label=""
-              registration={otpForm.register("otp")}
-              error={otpForm.formState.errors.otp?.message}
-              maxLength={4}
-              autoFocus
-              className="text-center text-lg tracking-widest uppercase"
+            <Controller
+              control={otpForm.control}
+              name="otp"
+              render={({ field }) => (
+                <OtpInput
+                  length={4}
+                  value={field.value || ''}
+                  onChange={field.onChange}
+                  error={otpForm.formState.errors.otp?.message}
+                />
+              )}
             />
           </div>
         )}
@@ -95,29 +100,26 @@ const AuthPage: React.FC = () => {
           {isLoading ? "Processing..." : (step === 'LOGIN' ? 'Login' : 'Verify & Login')}
         </button>
       </form>
-       <div className='flex justify-between items-center mt-4'>
-         <button
-        type='submit'
-        onClick={
-          ()=>{
-            executeForgetUserId(
-              "AMITH1234A",
-              "amit.gupta@omnenest.com"
-            )
-          }
-        }
-        className='text-[#0f62fe] text-xs'
-        >
-         Forgot user ID or password?
-        </button>
+      <div className='flex justify-between items-center mt-4'>
+        {step !== 'OTP' ? (
+          <div className='flex justify-between items-center mt-4'>
+            <button
+              type='button'
+              onClick={() => executeForgetUserId("AMITH1234A", "amit.gupta@omnenest.com")}
+              className='text-[#0f62fe] text-xs'
+            >
+              Forgot user ID or password?
+            </button>
 
-         <button
-        type='submit'
-        className='text-[#0f62fe] text-xs'
-        >
-         Guest Login
-        </button>
-       </div>
+            <button
+              type='button'
+              className='text-[#0f62fe] text-xs'
+            >
+              Guest Login
+            </button>
+          </div>
+        ) : null}
+      </div>
     </AuthLayout>
   );
 };
