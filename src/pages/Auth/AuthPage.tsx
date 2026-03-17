@@ -6,16 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 
 type AuthStep = 'LOGIN' | 'OTP';
+
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
-  const {
-    executeHandshake,
-    executeLogin,
-    executeOtpValidation,
-    isLoading,
-    error
-  } = useAuthStore();
-
+  const { executeHandshake, executeLogin, executeOtpValidation, isLoading, error } = useAuthStore();
   const [step, setStep] = useState<AuthStep>('LOGIN');
 
   const {
@@ -49,131 +43,120 @@ const AuthPage: React.FC = () => {
     try {
       await executeOtpValidation(getLoginValues("username"), Number(data.otp));
       navigate('/dashboard', { replace: true });
-      console.log("Success");
     } catch (err) {
       console.error("OTP validation failed", err);
     }
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen w-full">
-    <div className="hidden md:flex md:w-1/2 h-screen p-6">
-  <div className="w-full h-full bg-[#0f62fe] rounded-3xl flex flex-col items-center justify-center p-12">
-    
-    <div className="max-w-109.25 w-full text-center text-white mb-10">
-      <h1 className="font-['Inter'] text-[32px] leading-[140%] tracking-tight">
-        <span className="font-normal">Take Charge </span>
-        <br />
-        <span className="font-bold">of Your Investments with Us</span>
-      </h1>
-    </div>
+    <div className="flex h-dvh w-full items-center justify-center bg-slate-50 overflow-hidden">
+      {/* Main Container */}
+      <div className=" flex h-screen w-full max-w-275 overflow-hidden rounded-[22px] ">
+        
+        {/* Left Panel: Artwork (Hidden on Mobile) */}
+        <section className="relative hidden w-[47%] flex-col rounded-[22px] bg-[#0f62fe] text-white lg:flex">
+          {/* Pattern Overlays */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] bg-size-[24px_24px]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_36%),linear-gradient(180deg,#2b6cf6_0%,#1157f0_100%)]" />
 
-    <div className="flex justify-center">
-      <img
-        src="/src/assets/auth.svg"
-        alt="Investment Illustration"
-        className="w-full h-auto object-contain transform scale-110" 
-      />
-    </div>
-    
-  </div>
-</div>
-      <div className="w-full md:w-1/2 flex items-center justify-center p-6 md:p-12">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
-        <div className="flex flex-col items-start mb-8">
-      <img 
-        src="/src/assets/logo.svg" 
-        alt="Nest Logo" 
-        className="h-12 w-auto mb-4 object-contain" 
-      />
-      <h2 className="text-xl font-medium text-slate-600">
-        Welcome to <span className="text-[#0f62fe] font-bold">Nest app</span>
-      </h2>
-    </div>
-
-          {error && (
-            <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg text-center animate-pulse">
-              {error}
+          <div className="relative z-10 flex h-full flex-col items-center justify-between px-10 py-12 text-center">
+            <div className="pt-12">
+              <h1 className="text-3xl font-medium leading-tight text-white">
+                Take Charge <br />
+                of Your <span className="font-bold">Investments with Us</span>
+              </h1>
+              <p className="mt-4 text-sm text-blue-100 opacity-80 italic">"Secure your future with Nest"</p>
             </div>
-          )}
 
-          <form
-            onSubmit={step === 'LOGIN' ? handleLoginSubmitRHF(onLoginSubmit) : handleOtpSubmitRHF(onOtpSubmit)}
-            className="space-y-5"
-          >
-            {step === 'LOGIN' ? (
-              <>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Mobile no. / Email /Client ID</label>
-                  <input
-                    {...registerLogin("username")}
-                    type="text"
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition uppercase"
-                    placeholder="E.G. AMITH1"
-                  />
-                  {loginErrors.username && (
-                    <p className="text-red-500 text-xs mt-1">{loginErrors.username.message}</p>
-                  )}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Password / MPIN</label>
-                  <input
-                    {...registerLogin("password")}
-                    type="password"
-                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-                    placeholder="••••••••"
-                  />
-                  {loginErrors.password && (
-                    <p className="text-red-500 text-xs mt-1">{loginErrors.password.message}</p>
-                  )}
-                </div>
-              </>
-            ) : (
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1 text-center">
-                  One-Time Password
-                </label>
-                <input
-                  {...registerOtp("otp")}
-                  type="text"
-                  maxLength={4}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-lg text-center text-2xl tracking-[0.5em] font-mono focus:ring-2 focus:ring-blue-500 outline-none"
-                  autoFocus
-                />
-                {otpErrors.otp && (
-                  <p className="text-red-500 text-xs mt-1 text-center">{otpErrors.otp.message}</p>
-                )}
-              </div>
-            )}
+            <div className="flex flex-1 items-center justify-center">
+              <img src="/src/assets/auth.svg" alt="Artwork" className="h-auto w-full max-w-70" />
+            </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition duration-200 flex justify-center items-center disabled:opacity-50"
+            {/* Pagination Dots */}
+            <div className="flex items-center gap-2 pb-2">
+              <span className="h-1.5 w-5 rounded-full bg-white" />
+              <span className="h-2 w-2 rounded-full bg-white/40" />
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+            </div>
+          </div>
+        </section>
+
+        {/* Right Panel: Form */}
+        <section className="flex flex-1 items-center justify-center px-7 py-10 sm:px-12 lg:px-16">
+          <div className="w-full max-w-90">
+            <div className="mb-10">
+              <img src="/src/assets/logo.svg" alt="Logo" className="mb-6 h-12 w-auto" />
+              <h2 className="text-[15px] font-semibold text-[#2f2f2f]">
+                Welcome to <span className="text-[#0f62fe]">Nest app</span>
+              </h2>
+            </div>
+
+            <form 
+              onSubmit={step === 'LOGIN' ? handleLoginSubmitRHF(onLoginSubmit) : handleOtpSubmitRHF(onOtpSubmit)}
+              className="mt-8 space-y-5"
             >
-              {isLoading ? (
-                <span className="flex items-center">
-                  <svg className="animate-spin h-5 w-5 mr-3 border-t-2 border-white rounded-full" viewBox="0 0 24 24"></svg>
-                  Processing...
-                </span>
+              {step === 'LOGIN' ? (
+                <>
+                  <div className="space-y-1">
+                    <label className="text-[13px] font-medium text-slate-700">Mobile no. / Email / Client ID</label>
+                    <input
+                      {...registerLogin("username")}
+                      className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm transition focus:border-[#0f62fe] focus:ring-4 focus:ring-blue-500/10 outline-none"
+                      placeholder="Enter Mobile no. / Email"
+                    />
+                    {loginErrors.username && <p className="text-[11px] text-red-500">{loginErrors.username.message}</p>}
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <label className="text-[13px] font-medium text-slate-700">Password / MPIN</label>
+                    <input
+                      {...registerLogin("password")}
+                      type="password"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm transition focus:border-[#0f62fe] focus:ring-4 focus:ring-blue-500/10 outline-none"
+                      placeholder="Enter password / MPIN"
+                    />
+                    {loginErrors.password && <p className="text-[11px] text-red-500">{loginErrors.password.message}</p>}
+                  </div>
+                </>
               ) : (
-                step === 'LOGIN' ? 'Continue' : 'Verify & Login'
+                <div className="space-y-3">
+                  <div className="text-center">
+                    <p className="text-sm font-semibold text-[#2f2f2f]">Enter OTP</p>
+                    <p className="mt-1 text-[11px] text-slate-400">
+                      OTP sent on {getLoginValues("username") || "your registered account"}
+                    </p>
+                  </div>
+                  <input
+                    {...registerOtp("otp")}
+                   className="w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm transition focus:border-[#0f62fe] focus:ring-4 focus:ring-blue-500/10 outline-none uppercase"
+                    maxLength={4}
+                    autoFocus
+                  />
+                  {otpErrors.otp && <p className="text-center text-[11px] text-red-500">{otpErrors.otp.message}</p>}
+                </div>
               )}
-            </button>
 
-            {step === 'OTP' && (
-              <button
-                type="button"
-                onClick={() => setStep('LOGIN')}
-                className="w-full text-sm text-slate-500 hover:text-blue-600 transition"
-              >
-                ← Back to credentials
-              </button>
-            )}
-          </form>
-        </div>
+              {/* Global Error Display */}
+              {error && (
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-600">
+                  {error}
+                </div>
+              )}
+
+              <div className="mt-8 flex gap-3">
+                {step === 'OTP'}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-1 rounded-lg bg-[#0f62fe] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0b57df] disabled:bg-slate-200 disabled:text-slate-500"
+                >
+                  {isLoading ? "Processing..." : (step === 'LOGIN' ? 'Login' : 'Verify & Login')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
       </div>
-
     </div>
   );
 };
