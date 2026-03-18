@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuthStore } from '../../store/auth.store';
-import { loginSchema, otpSchema, type LoginFormData, type OtpFormData } from '../../schema/auth.schema';
+import { loginSchema, otpSchema, type LoginFormData, type OtpFormData } from './schema/auth.schema';
 import { AuthLayout } from './components/AuthLayout';
 import { InputField } from '../../shared/components/InputField';
 import { OtpInput } from '../../shared/components/OtpInput';
