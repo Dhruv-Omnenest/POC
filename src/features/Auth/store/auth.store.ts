@@ -33,8 +33,6 @@ export const useAuthStore = create<AuthState>()(
       setError: (error) => set({ error }),
 
       clearAuth: () => {
-        // Explicitly resetting the state triggers the persist middleware 
-        // to update/clear the 'auth-storage' in localStorage
         set({ 
           user: null, 
           isAuthenticated: false, 
