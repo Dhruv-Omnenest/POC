@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import Cookies from "js-cookie";
 import type { HandshakeResponse, UserProfile } from '../types/auth';
-import { loginUser, preAuthHandShake, validateOtp,forgetUser, logoutUser } from '../api/auth.api';
+import { loginUser, preAuthHandShake, validateOtp, logoutUser, changePassword, forgotPassword, forgotUser } from '../api/auth.api';
 
 interface AuthState {
     user: Omit<UserProfile, 'jwtTokens'> | null;
@@ -13,8 +13,10 @@ interface AuthState {
     executeHandshake: () => Promise<void>;
     executeLogin: (username: string, password: string) => Promise<void>;
     executeOtpValidation: (username: string, otp: number) => Promise<void>;
-    executeForgetUserId: (panNumber:string,emailId:string) => Promise<void>;
+    executeForgotUserId: (panNumber:string,emailId:string) => Promise<void>;
     executeLogout:() => Promise <void>;
+    executeChangePassword: (oldPassword:string,newPassword:string) => Promise <void>;
+     executeForgotPassword: (panNumber:string,username:string) => Promise<void>;
     logout: () => void;
 }
 
@@ -74,9 +76,9 @@ export const useAuthStore = create<AuthState>()(
                 localStorage.removeItem('auth-storage');
             },
 
-              executeForgetUserId: async (panNumber, emailId) => {
+              executeForgotUserId: async (panNumber, emailId) => {
                 try {
-                    await forgetUser(panNumber,emailId);
+                    await forgotUser(panNumber,emailId);
                     console.log("Forget User Id Success")
                 } catch (err: any) {
                     set({ error: "Forget User Id Failed", isLoading: false });
@@ -94,6 +96,27 @@ export const useAuthStore = create<AuthState>()(
                     throw err;
                 }
             },
+
+
+             executeChangePassword: async (oldPassword,newPassword) => {
+                try {
+                    await changePassword(oldPassword,newPassword);
+                    console.log("Change Password Success")
+                } catch (err: any) {
+                    set({ error: "Change Password Failed", isLoading: false });
+                    throw err;
+                }
+            },
+
+            executeForgotPassword: async (panNumber, username) => {
+                try {
+                    await forgotPassword(panNumber,username);
+                    console.log("Forget Password Success")
+                } catch (err: any) {
+                    set({ error: "Forget Password Failed", isLoading: false });
+                    throw err;
+                }
+            },
         }),
         {
             name: 'auth-storage',
@@ -105,3 +128,4 @@ export const useAuthStore = create<AuthState>()(
         }
     )
 );
+

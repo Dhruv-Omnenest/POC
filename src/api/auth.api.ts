@@ -63,7 +63,7 @@ export const validateOtp = async (username: string, otp: number) => {
 }
 
 
-export const forgetUser = async (panNumber: string, emailId: string) => {
+export const forgotUser = async (panNumber: string, emailId: string) => {
     try {
         const payload = {
             panNumber,
@@ -78,6 +78,46 @@ export const forgetUser = async (panNumber: string, emailId: string) => {
     catch (error: any) {
         if (error.response) {
             console.error("Forget User Id Failed:", error.response.data);
+        }
+        throw error;
+    }
+}
+
+export const forgotPassword = async (panNumber: string, username: string) => {
+    try {
+        const payload = {
+            panNumber,
+            username
+        }
+        const response = await apiClient.post(
+            '/v1/api/auth/forgot-password',
+            payload
+        )
+        return response.data;
+    }
+    catch (error: any) {
+        if (error.response) {
+            console.error("Forget Password Failed:", error.response.data);
+        }
+        throw error;
+    }
+}
+
+export const changePassword = async (oldPassword: string, newPassword: string) => {
+    try {
+        const payload = {
+            oldPassword,
+            newPassword
+        }
+        const response = await apiClient.post(
+            'v1/api/auth/change-password ',
+            payload
+        )
+        return response.data;
+    }
+    catch (error: any) {
+        if (error.response) {
+            console.error("Change Password Failed:", error.response.data);
         }
         throw error;
     }
