@@ -33,15 +33,11 @@ const AuthPage: React.FC = () => {
     handleForgotPassword,
     handleChangePassword
   } = useAuth();
-
-  // Initialize Forms
   const loginForm = useForm<LoginFormData>({ resolver: zodResolver(loginSchema) });
   const otpForm = useForm<OtpFormData>({ resolver: zodResolver(otpSchema) });
   const forgotPasswordForm = useForm<ForgotPasswordFormData>({ resolver: zodResolver(forgotPasswordSchema) });
   const forgotUserIdForm = useForm<ForgotUserIdFormData>({ resolver: zodResolver(forgotUserIdSchema) });
   const changePasswordForm = useForm<ChangePasswordFormData>({ resolver: zodResolver(changePasswordSchema) });
-
-  // Navigation helper: Clears global API errors when switching views
   const navigateToStep = (newStep: AuthStep) => {
     clearError();
     setStep(newStep);
@@ -53,7 +49,7 @@ const AuthPage: React.FC = () => {
       await handleHandshake();
       await handleLogin(data.username, data.password);
       navigateToStep('OTP');
-    } catch (err) { /* Error handled by hook */ }
+    } catch (err) {}
   };
 
   const onForgotSubmit = async (data: any) => {
