@@ -39,34 +39,33 @@ export const useAuth = () => {
         }
     };
 
-    const handleOtpValidation = async (username: string, otp: number) => {
-        setIsLoading(true);
-        clearError();
-        try {
-            const data = await authApi.validateOtp(username, otp);
-            // Remove tokens from profile before storing in persisted state
-            const { jwtTokens, ...userProfile } = data;
-            store.setAuth(userProfile);
-        } catch (err) {
-            handleError(err, "OTP validation failed");
-            throw err;
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const handleForgotUserId = async (pan: string, email: string) => {
-        setIsLoading(true);
-        clearError();
-        try {
-            await authApi.forgotUser(pan, email);
-        } catch (err) {
-            handleError(err, "Could not process User ID request");
-            throw err;
-        } finally {
-            setIsLoading(false);
-        }
-    };
+const handleOtpValidation = async (identifier: string, otp: number) => {
+    setIsLoading(true);
+    clearError();
+    try {
+        const data = await authApi.validateOtp(identifier, otp);
+        const { jwtTokens, ...userProfile } = data;
+        store.setAuth(userProfile);
+    } catch (err) {
+        handleError(err, "OTP validation failed");
+        throw err;
+    } finally {
+        setIsLoading(false);
+    }
+};
+const handleForgotUserId = async (pan: string, email: string) => {
+    setIsLoading(true);
+    clearError();
+    try {
+        const response = await authApi.forgotUser(pan, email);
+        return response.username; 
+    } catch (err) {
+        handleError(err, "Could not process User ID request");
+        throw err;
+    } finally {
+        setIsLoading(false);
+    }
+};
 
     const handleForgotPassword = async (pan: string, username: string) => {
         setIsLoading(true);

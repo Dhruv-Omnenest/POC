@@ -7,6 +7,16 @@ export type Exchange =
 
 export type ProductCode = "BO" | "CNC" | "CO" | "MIS" | "MTF" | "NRML";
 
+export type AuthStep = 'LOGIN' | 'OTP' | 'CHANGE PASSWORD' | 'FORGOT PASSWORD';
+export type AuthFlow = 'LOGIN_FLOW' | 'RECOVERY_FLOW';
+export type RecoveryTab = 'PASSWORD' | 'USER_ID'; 
+export interface RecoveryStepProps {
+  onNext: (id: string, type: RecoveryTab) => void;
+}
+export interface StepProps {
+  onNext: (data: any) => void;
+  onBack?: () => void;
+}
 export interface JwtTokens {
     accessToken: string;
     refreshToken: string;
