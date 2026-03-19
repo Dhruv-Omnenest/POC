@@ -24,7 +24,7 @@ export const AuthCarousel = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % CAROUSEL_DATA.length);
-    }, 5000);
+    }, 2000);
     return () => clearInterval(interval);
   }, []);
 
