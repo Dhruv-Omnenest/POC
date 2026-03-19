@@ -8,12 +8,11 @@ import { RecoveryStep } from '../../features/Auth/components/RecoveryStep';
 import { ChangePasswordStep } from '../../features/Auth/components/ChangePassword';
 import { OtpStep } from '../../features/Auth/components/OtpStep';
 
-
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<AuthStep>('LOGIN');
   const [flow, setFlow] = useState<AuthFlow>('LOGIN_FLOW');
-  const [identifier, setIdentifier] = useState("")
+  const [identifier, setIdentifier] = useState("");
 
   const { clearError, handleHandshake, handleLogin, handleOtpValidation } = useAuth();
 
@@ -21,6 +20,7 @@ const AuthPage: React.FC = () => {
     clearError();
     setStep(nextStep);
   };
+
   const onLogin = async (data: any) => {
     try {
       setFlow('LOGIN_FLOW');
@@ -31,31 +31,39 @@ const AuthPage: React.FC = () => {
     } catch (err) {}
   };
 
-const onRecoverySuccess = (id: string, type: 'PASSWORD' | 'USER_ID') => {
-  if (type === 'PASSWORD') {
-    // We have the Client ID (id), so we can proceed to OTP
-    setFlow('RECOVERY_FLOW');
-    setIdentifier(id);
-    navigateTo('OTP');
-  } else {
-    // We only have the Email (id). The backend sent the ID to their inbox.
-    // We CANNOT go to OTP because we don't know "AMITH1" yet.
-    alert("Success! Your User ID has been sent to your registered email. Please use it to log in.");
-    navigateTo('LOGIN');
-  }
-};
+  const onRecoverySuccess = (id: string, type: 'PASSWORD' | 'USER_ID') => {
+    if (type === 'USER_ID') {
+      alert("Success! Your User ID has been sent to your registered email address.");
+      navigateTo('LOGIN');
+    } else {
+      setFlow('RECOVERY_FLOW');
+      setIdentifier(id); 
+      navigateTo('OTP');
+    }
+  };
+
   const onOtpSubmit = async (data: any) => {
     try {
-      await handleOtpValidation(identifier, Number(data.otp));
+      const usernameToSend = identifier; 
+      const otpToSend = Number(data.otp);
+
+      if (!usernameToSend) {
+        console.error("Username is missing! Identification failed.");
+        return;
+      }
+
+      await handleOtpValidation(usernameToSend, otpToSend);
+
       if (flow === 'RECOVERY_FLOW') {
         navigateTo('CHANGE PASSWORD');
       } else {
         navigate('/dashboard', { replace: true });
       }
-    } catch (err) {}
+    } catch (err) {
+      console.error("OTP Validation Error:", err);
+    }
   };
 
-  // --- Component Map ---
   const STEP_COMPONENTS: Record<AuthStep, React.ReactNode> = {
     'LOGIN': <LoginStep onNext={onLogin} />,
     'OTP': <OtpStep onNext={onOtpSubmit} />,

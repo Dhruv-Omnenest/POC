@@ -5,6 +5,7 @@ import * as authApi from '../../../api/auth.api';
 export const useAuth = () => {
     const [isLoading, setIsLoading] = useState(false);
     const store = useAuthStore();
+
     const handleError = useCallback((err: any, fallback: string) => {
         const message = err?.response?.data?.message || err?.message || fallback;
         store.setError(message);
@@ -39,33 +40,33 @@ export const useAuth = () => {
         }
     };
 
-const handleOtpValidation = async (identifier: string, otp: number) => {
-    setIsLoading(true);
-    clearError();
-    try {
-        const data = await authApi.validateOtp(identifier, otp);
-        const { jwtTokens, ...userProfile } = data;
-        store.setAuth(userProfile);
-    } catch (err) {
-        handleError(err, "OTP validation failed");
-        throw err;
-    } finally {
-        setIsLoading(false);
-    }
-};
-const handleForgotUserId = async (pan: string, email: string) => {
-    setIsLoading(true);
-    clearError();
-    try {
-        const response = await authApi.forgotUser(pan, email);
-        return response.username; 
-    } catch (err) {
-        handleError(err, "Could not process User ID request");
-        throw err;
-    } finally {
-        setIsLoading(false);
-    }
-};
+    const handleOtpValidation = async (identifier: string, otp: number) => {
+        setIsLoading(true);
+        clearError();
+        try {
+            const data = await authApi.validateOtp(identifier, otp);
+            const { jwtTokens, ...userProfile } = data;
+            store.setAuth(userProfile);
+        } catch (err) {
+            handleError(err, "OTP validation failed");
+            throw err;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleForgotUserId = async (pan: string, email: string) => {
+        setIsLoading(true);
+        clearError();
+        try {
+            await authApi.forgotUser(pan, email);
+        } catch (err) {
+            handleError(err, "Could not process User ID request");
+            throw err;
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleForgotPassword = async (pan: string, username: string) => {
         setIsLoading(true);
@@ -92,6 +93,7 @@ const handleForgotUserId = async (pan: string, email: string) => {
             setIsLoading(false);
         }
     };
+
     const handleLogout = async () => {
         setIsLoading(true);
         try {

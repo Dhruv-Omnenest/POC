@@ -20,7 +20,6 @@ export const useAuthStore = create<AuthState>()(
       bffPublicKey: null,
       isAuthenticated: false,
       error: null,
-
       setAuth: (user) => 
         set({ 
           user, 
@@ -29,9 +28,7 @@ export const useAuthStore = create<AuthState>()(
         }),
       
       setPublicKey: (bffPublicKey) => set({ bffPublicKey }),
-      
       setError: (error) => set({ error }),
-
       clearAuth: () => {
         set({ 
           user: null, 
