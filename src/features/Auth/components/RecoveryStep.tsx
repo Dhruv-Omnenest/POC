@@ -6,7 +6,7 @@ import { InputField } from '../../../shared/components/InputField';
 import { forgotPasswordSchema, type ForgotPasswordFormData } from '../schema/forgotPassword.schema';
 import { forgotUserIdSchema, type ForgotUserIdFormData } from '../schema/forgotUserId.schema';
 import type { RecoveryTab } from '../types/auth';
-import { AuthStepWrapper } from './AuthFormWrapper';
+import { AuthStepWrapper } from './AuthStepWrapper';
 
 interface RecoveryStepProps {
   onNext: (id: string, type: RecoveryTab) => void;
@@ -28,18 +28,13 @@ export const RecoveryStep: React.FC<RecoveryStepProps> = ({ onNext }) => {
     try {
       if (tab === 'PASSWORD') {
         await handleForgotPassword(data.pan, data.clientId);
-        // For Password, we pass the Client ID to move to OTP step
         onNext(data.clientId, 'PASSWORD'); 
       } else {
-        // For User ID, the API returns {"message": "success"}
         await handleForgotUserId(data.pan, data.email);
-        
-        // We pass the email as a placeholder. 
-        // AuthPage will intercept 'USER_ID' type to show an alert and redirect to Login.
         onNext(data.email, 'USER_ID'); 
       }
     } catch (err) {
-      // Errors are handled by the useAuth hook
+      
     }
   };
 

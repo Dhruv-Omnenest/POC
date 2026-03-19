@@ -27,18 +27,22 @@ export const useAuth = () => {
         }
     };
 
-    const handleLogin = async (username: string, password: string) => {
-        setIsLoading(true);
-        clearError();
-        try {
-            await authApi.loginUser(username, password);
-        } catch (err) {
+   const handleLogin = async (username: string, password: string) => {
+    setIsLoading(true);
+    clearError();
+    try {
+        await authApi.loginUser(username, password);
+    } catch (err: any) {
+        if (err?.response?.status === 423) {
+            store.setError("USER_LOCKED");
+        } else {
             handleError(err, "Invalid username or password");
-            throw err;
-        } finally {
-            setIsLoading(false);
         }
-    };
+        throw err;
+    } finally {
+        setIsLoading(false);
+    }
+};
 
     const handleOtpValidation = async (identifier: string, otp: number) => {
         setIsLoading(true);
@@ -86,7 +90,9 @@ export const useAuth = () => {
         clearError();
         try {
             await authApi.changePassword(oldPass, newPass);
+            console.log("i am there");
         } catch (err) {
+            console.log("issues");
             handleError(err, "Password change failed");
             throw err;
         } finally {
@@ -106,6 +112,51 @@ export const useAuth = () => {
         }
     };
 
+    const handleSetPassword = async (username: string, newPass: string) => {
+        setIsLoading(true);
+        clearError();
+        try {
+            await authApi.setPassword(username, newPass);
+            console.log("Password set successfully");
+        } catch (err) {
+            handleError(err, "Failed to set new password");
+            throw err;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
+    const handleUnblockUser = async (pan: string, username: string) => {
+    setIsLoading(true);
+    clearError();
+    try {
+        await authApi.unblockUser(pan, username);
+    } catch (err) {
+        handleError(err, "Unblock request failed");
+        throw err;
+    } finally {
+        setIsLoading(false);
+    }
+
+    
+};
+
+
+const handleUnblockOtpValidation = async (username: string, otp: number) => {
+        setIsLoading(true);
+        clearError();
+        try {
+            await authApi.authenticateUnblockOtp(username, otp);
+        } catch (err) {
+            handleError(err, "Unblock OTP validation failed");
+            throw err;
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+
     return {
         isLoading,
         error: store.error,
@@ -120,5 +171,8 @@ export const useAuth = () => {
         handleForgotPassword,
         handleChangePassword,
         handleLogout,
+        handleSetPassword,
+        handleUnblockUser,
+        handleUnblockOtpValidation,
     };
 };

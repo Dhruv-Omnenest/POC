@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../hooks/useAuth';
 import { OtpInput } from '../../../shared/components/OtpInput';
 import { otpSchema, type OtpFormData } from '../schema/login.schema';
-import { AuthStepWrapper } from './AuthFormWrapper';
+import { AuthStepWrapper } from './AuthStepWrapper';
 
 interface OtpStepProps {
   onNext: (data: OtpFormData) => void;

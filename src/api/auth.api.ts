@@ -122,8 +122,54 @@ export const changePassword = async (oldPassword: string, newPassword: string) =
         throw error;
     }
 }
+export const setPassword = async (username: string, password: string) => {
+    try {
+        const payload = {
+            username,
+            password
+        };
+        const response = await apiClient.post(
+            '/v1/api/auth/set-password',
+            payload
+        );
+        return response.data;
+    }
+    catch (error: any) {
+        if (error.response) {
+            console.error("Set Password API Failed:", error.response.data);
+        }
+        throw error;
+    }
+};
 
 
+export const unblockUser = async (panNumber: string, username: string) => {
+  try{  const response = await apiClient.post('/v1/api/auth/unblock-user', { panNumber, username });
+    return response.data;
+}
+ catch (error: any) {
+        if (error.response) {
+            console.error("Set Password API Failed:", error.response.data);
+        }
+        throw error;
+    }
+};
+
+export const authenticateUnblockOtp = async (username: string, otp: number) => {
+   try{ const response = await apiClient.post('/v1/api/auth/authenticate-otp', {
+        username,
+        otp,
+        isUserBlocked: true
+    });
+    return response.data;
+}
+catch (error: any) {
+        if (error.response) {
+            console.error("Set Password API Failed:", error.response.data);
+        }
+        throw error;
+    }
+};
 export const getAuthToken = (): string | null => {
     return localStorage.getItem('auth_token');
 };

@@ -7,8 +7,8 @@ export type Exchange =
 
 export type ProductCode = "BO" | "CNC" | "CO" | "MIS" | "MTF" | "NRML";
 
-export type AuthStep = 'LOGIN' | 'OTP' | 'CHANGE PASSWORD' | 'FORGOT PASSWORD';
-export type AuthFlow = 'LOGIN_FLOW' | 'RECOVERY_FLOW';
+export type AuthStep = 'LOGIN' | 'OTP' | 'CHANGE PASSWORD' | 'FORGOT PASSWORD'| 'UNBLOCK';
+export type AuthFlow = 'LOGIN_FLOW' | 'RECOVERY_FLOW'| 'UNBLOCK_FLOW';
 export type RecoveryTab = 'PASSWORD' | 'USER_ID'; 
 export interface RecoveryStepProps {
   onNext: (id: string, type: RecoveryTab) => void;

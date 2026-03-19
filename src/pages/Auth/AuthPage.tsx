@@ -7,6 +7,7 @@ import { AuthLayout } from '../../features/Auth/components/AuthLayout';
 import { RecoveryStep } from '../../features/Auth/components/RecoveryStep';
 import { ChangePasswordStep } from '../../features/Auth/components/ChangePassword';
 import { OtpStep } from '../../features/Auth/components/OtpStep';
+import { UnblockStep } from '../../features/Auth/components/UnblockStep';
 
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -14,7 +15,13 @@ const AuthPage: React.FC = () => {
   const [flow, setFlow] = useState<AuthFlow>('LOGIN_FLOW');
   const [identifier, setIdentifier] = useState("");
 
-  const { clearError, handleHandshake, handleLogin, handleOtpValidation } = useAuth();
+  const { 
+    clearError, 
+    handleHandshake, 
+    handleLogin, 
+    handleOtpValidation, 
+    handleUnblockOtpValidation 
+  } = useAuth();
 
   const navigateTo = (nextStep: AuthStep) => {
     clearError();
@@ -31,50 +38,46 @@ const AuthPage: React.FC = () => {
     } catch (err) {}
   };
 
-  const onRecoverySuccess = (id: string, type: 'PASSWORD' | 'USER_ID') => {
-    if (type === 'USER_ID') {
-      alert("Success! Your User ID has been sent to your registered email address.");
-      navigateTo('LOGIN');
-    } else {
-      setFlow('RECOVERY_FLOW');
-      setIdentifier(id); 
-      navigateTo('OTP');
-    }
+  const onUnblockTrigger = (username: string) => {
+    setIdentifier(username);
+    setFlow('UNBLOCK_FLOW');
+    navigateTo('OTP');
   };
 
   const onOtpSubmit = async (data: any) => {
     try {
-      const usernameToSend = identifier; 
-      const otpToSend = Number(data.otp);
-
-      if (!usernameToSend) {
-        console.error("Username is missing! Identification failed.");
-        return;
-      }
-
-      await handleOtpValidation(usernameToSend, otpToSend);
-
-      if (flow === 'RECOVERY_FLOW') {
-        navigateTo('CHANGE PASSWORD');
+      const otp = Number(data.otp);
+      
+      if (flow === 'UNBLOCK_FLOW') {
+        await handleUnblockOtpValidation(identifier, otp);
+        alert("Account unblocked! You can now login.");
+        navigateTo('LOGIN');
       } else {
-        navigate('/dashboard', { replace: true });
+        await handleOtpValidation(identifier, otp);
+        if (flow === 'RECOVERY_FLOW') {
+          navigateTo('CHANGE PASSWORD');
+        } else {
+          navigate('/dashboard', { replace: true });
+        }
       }
-    } catch (err) {
-      console.error("OTP Validation Error:", err);
-    }
+    } catch (err) {}
   };
 
-  const STEP_COMPONENTS: Record<AuthStep, React.ReactNode> = {
-    'LOGIN': <LoginStep onNext={onLogin} />,
+  const STEP_COMPONENTS: Record<string, React.ReactNode> = {
+    'LOGIN': <LoginStep onNext={onLogin} onUnblock={() => navigateTo('UNBLOCK')} />,
     'OTP': <OtpStep onNext={onOtpSubmit} />,
-    'FORGOT PASSWORD': <RecoveryStep onNext={onRecoverySuccess} />,
-    'CHANGE PASSWORD': <ChangePasswordStep onNext={() => navigateTo('LOGIN')} />
+    'UNBLOCK': <UnblockStep onNext={onUnblockTrigger} />,
+    'FORGOT PASSWORD': <RecoveryStep onNext={(id) => { 
+        setFlow('RECOVERY_FLOW'); 
+        setIdentifier(id); 
+        navigateTo('OTP'); 
+    }} />,
+    'CHANGE PASSWORD': <ChangePasswordStep username={identifier} onNext={() => navigateTo('LOGIN')} />
   };
 
   return (
     <AuthLayout>
       {STEP_COMPONENTS[step]}
-
       <div className='mt-4 pt-2 border-t border-gray-50'>
         <button 
           type='button' 
