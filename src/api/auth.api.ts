@@ -174,7 +174,13 @@ export const getAuthToken = (): string | null => {
     return localStorage.getItem('auth_token');
 };
 
-export const logoutUser = () => {
+export const logoutUser = async () => {
+  try {
+    await apiClient.get('v1/api/auth/logout');
+  } catch (error: any) {
+    console.error("Logout API signaled an error, proceeding with local cleanup:", error.message);
+  } finally {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('refresh_token');
+  }
 };

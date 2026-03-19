@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getHeaders } from "../utils/requestHeaders";
+import { addTokenInterceptor, errorInterceptor } from "./interceptors";
 
 
 export const apiClient = axios.create(
@@ -8,3 +9,5 @@ export const apiClient = axios.create(
         headers:getHeaders()
     }
 )
+apiClient.interceptors.request.use(addTokenInterceptor);
+apiClient.interceptors.response.use((response) => response, errorInterceptor);
