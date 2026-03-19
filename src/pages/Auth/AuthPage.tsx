@@ -67,11 +67,16 @@ const AuthPage: React.FC = () => {
     'LOGIN': <LoginStep onNext={onLogin} onUnblock={() => navigateTo('UNBLOCK')} />,
     'OTP': <OtpStep onNext={onOtpSubmit} />,
     'UNBLOCK': <UnblockStep onNext={onUnblockTrigger} />,
-    'FORGOT PASSWORD': <RecoveryStep onNext={(id) => { 
-        setFlow('RECOVERY_FLOW'); 
-        setIdentifier(id); 
-        navigateTo('OTP'); 
-    }} />,
+    'FORGOT PASSWORD': <RecoveryStep onNext={(id, type) => { 
+    if (type === 'USER_ID') {
+      alert(`User ID recovery email has been sent to ${id}`);
+      navigateTo('LOGIN');
+    } else {
+      setFlow('RECOVERY_FLOW'); 
+      setIdentifier(id); 
+      navigateTo('OTP'); 
+    }
+}} />,
     'CHANGE PASSWORD': <ChangePasswordStep username={identifier} onNext={() => navigateTo('LOGIN')} />
   };
 
