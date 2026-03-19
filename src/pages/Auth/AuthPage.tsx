@@ -20,7 +20,7 @@ const AuthPage: React.FC = () => {
     handleHandshake,
     handleLogin,
     handleOtpValidation,
-    handleUnblockOtpValidation
+    handleOtpAuthentication
   } = useAuth();
 
   const navigateTo = (nextStep: AuthStep) => {
@@ -44,24 +44,24 @@ const AuthPage: React.FC = () => {
     navigateTo('OTP');
   };
 
-  const onOtpSubmit = async (data: any) => {
-    try {
-      const otp = Number(data.otp);
-
+const onOtpSubmit = async (data: any) => {
+  try {
+    const otp = Number(data.otp);
+    if (flow === 'UNBLOCK_FLOW' || flow === 'RECOVERY_FLOW') {
+      await handleOtpAuthentication(identifier, otp);
       if (flow === 'UNBLOCK_FLOW') {
-        await handleUnblockOtpValidation(identifier, otp);
         alert("Account unblocked! You can now login.");
         navigateTo('LOGIN');
       } else {
-        await handleOtpValidation(identifier, otp);
-        if (flow === 'RECOVERY_FLOW') {
-          navigateTo('CHANGE PASSWORD');
-        } else {
-          navigate('/dashboard', { replace: true });
-        }
+        navigateTo('CHANGE PASSWORD');
       }
-    } catch (err) { }
-  };
+    } else {
+      await handleOtpValidation(identifier, otp);
+      navigate('/dashboard', { replace: true });
+    }
+  } catch (err) { 
+  }
+};
 
   const STEP_COMPONENTS: Record<string, React.ReactNode> = {
     'LOGIN': <LoginStep onNext={onLogin} onUnblock={() => navigateTo('UNBLOCK')} />,
@@ -105,7 +105,7 @@ const AuthPage: React.FC = () => {
         </button>
         <button
           type='button'
-          onClick={() => navigateTo(step === 'LOGIN' ? 'FORGOT PASSWORD' : 'LOGIN')}
+          onClick={() => {}}
           className='text-[#0f62fe] text-xs font-medium hover:underline'
         >
           {step === 'LOGIN' ? "Guest Login" : ""}

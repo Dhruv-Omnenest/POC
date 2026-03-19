@@ -155,7 +155,7 @@ export const unblockUser = async (panNumber: string, username: string) => {
     }
 };
 
-export const authenticateUnblockOtp = async (username: string, otp: number) => {
+export const authenticateOtp = async (username: string, otp: number) => {
    try{ const response = await apiClient.post('/v1/api/auth/authenticate-otp', {
         username,
         otp,

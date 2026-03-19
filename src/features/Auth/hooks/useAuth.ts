@@ -143,11 +143,11 @@ export const useAuth = () => {
 };
 
 
-const handleUnblockOtpValidation = async (username: string, otp: number) => {
+const handleOtpAuthentication = async (username: string, otp: number) => {
         setIsLoading(true);
         clearError();
         try {
-            await authApi.authenticateUnblockOtp(username, otp);
+            await authApi.authenticateOtp(username, otp);
         } catch (err) {
             handleError(err, "Unblock OTP validation failed");
             throw err;
@@ -173,6 +173,6 @@ const handleUnblockOtpValidation = async (username: string, otp: number) => {
         handleLogout,
         handleSetPassword,
         handleUnblockUser,
-        handleUnblockOtpValidation,
+        handleOtpAuthentication,
     };
 };
