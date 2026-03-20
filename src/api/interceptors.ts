@@ -15,7 +15,6 @@ export const errorInterceptor = (error: any) => {
     if (error.response && error.response.status === 401) {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('refresh_token');
-        window.location.href = '/login'; 
     }
     return Promise.reject(error);
 };

@@ -149,7 +149,7 @@ export const unblockUser = async (panNumber: string, username: string) => {
 }
  catch (error: any) {
         if (error.response) {
-            console.error("Set Password API Failed:", error.response.data);
+            console.error("UnBlock API Failed:", error.response.data);
         }
         throw error;
     }
