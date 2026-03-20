@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { AuthFlow, AuthStep } from '../../features/Auth/types/auth';
 import { useAuth } from '../../features/Auth/hooks/useAuth';
@@ -9,6 +9,7 @@ import { ChangePasswordStep } from '../../features/Auth/components/ChangePasswor
 import { OtpStep } from '../../features/Auth/components/OtpStep';
 import { UnblockStep } from '../../features/Auth/components/UnblockStep';
 import QrIcon from "../../assets/qr.svg";
+
 const AuthPage: React.FC = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<AuthStep>('LOGIN');
@@ -28,11 +29,24 @@ const AuthPage: React.FC = () => {
     setStep(nextStep);
   };
 
+  useEffect(() => {
+    const initSession = async () => {
+      try {
+        await handleHandshake();
+        console.log("Handshake successful");
+      } catch (err) {
+        console.error("Handshake failed on load", err);
+      }
+    };
+
+    initSession();
+  }, []);
+
   const onLogin = async (data: any) => {
     try {
       setFlow('LOGIN_FLOW');
       setIdentifier(data.username);
-      await handleHandshake();
+      // await handleHandshake();
       await handleLogin(data.username, data.password);
       navigateTo('OTP');
     } catch (err) { }
@@ -63,7 +77,7 @@ const onOtpSubmit = async (data: any) => {
   }
 };
 
-  const STEP_COMPONENTS: Record<string, React.ReactNode> = {
+  const STEP_COMPONENTS: Record<string, ReactNode> = {
     'LOGIN': <LoginStep onNext={onLogin} onUnblock={() => navigateTo('UNBLOCK')} />,
     'OTP': <OtpStep onNext={onOtpSubmit} />,
     'UNBLOCK': <UnblockStep onNext={onUnblockTrigger} />,
